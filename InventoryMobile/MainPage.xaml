@@ -4,36 +4,31 @@
              xmlns:viewModels="clr-namespace:InventoryMobile.ViewModels"
              xmlns:dtos="clr-namespace:Inventory.Core.Application.DTOs;assembly=Inventory.Core.Application"
              x:Class="InventoryMobile.MainPage"
-             x:DataType="viewModels:MainViewModel"
-             Title="Inventory">
+             x:DataType="viewModels:MainViewModel">
 
-    <Grid RowDefinitions="Auto, *">
+    <ScrollView>
+        <VerticalStackLayout
+            Spacing="25"
+            Padding="30,0"
+            VerticalOptions="Center">
 
-        <Button Grid.Row="0"
-                Text="Refresh"
-                Command="{Binding LoadProductsCommand}"
-                Margin="10"/>
+            <CollectionView ItemsSource="{Binding Products}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:ProductDto">
+                        <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="5">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Name}" FontSize="Large" FontAttributes="Bold" />
+                                <Label Text="{Binding CategoryName}" FontSize="Medium" />
+                                <Label Text="{Binding Description}" />
+                                <Label Text="{Binding VariantsDisplay}" />
+                                <Label Text="{Binding TotalQuantity, StringFormat='Total Quantity: {0}'}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding Products}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type dtos:ProductDto}">
-                    <Frame Padding="10" Margin="10" CornerRadius="5" BorderColor="LightGray">
-                        <VerticalStackLayout>
-                            <Label Text="{Binding Name}" FontSize="Large" FontAttributes="Bold" />
-                            <Label Text="{Binding CategoryName}" FontSize="Small" />
-                            <Label Text="{Binding VariantsDisplay}" FontSize="Small" TextColor="Gray" />
-                        </VerticalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <ActivityIndicator Grid.Row="1"
-                           IsRunning="{Binding IsLoading}"
-                           IsVisible="{Binding IsLoading}"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-    </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
