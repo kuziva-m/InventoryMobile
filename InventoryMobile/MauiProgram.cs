@@ -5,6 +5,7 @@ using Inventory.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InventoryMobile.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection; // Add this using statement
 
 namespace InventoryMobile
 {
@@ -24,8 +25,7 @@ namespace InventoryMobile
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
-            //maui services
-            // This is where you will add your service registrations.
+
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "inventory.db");
 
             builder.Services.AddDbContext<InventoryDbContext>(options =>
@@ -33,11 +33,23 @@ namespace InventoryMobile
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
-            //end maui services
+
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddSingleton<MainPage>();
 
-            return builder.Build();
+            var app = builder.Build();
+
+            // Configure the Ioc service provider
+            Ioc.Default.ConfigureServices(app.Services);
+
+            // Run database migration
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+                dbContext.Database.Migrate();
+            }
+
+            return app;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using InventoryMobile.ViewModels;
+using System.Diagnostics;
 
 namespace InventoryMobile;
 
@@ -16,6 +17,17 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadProductsCommand.ExecuteAsync(null);
+        try
+        {
+            await _viewModel.LoadProductsCommand.ExecuteAsync(null);
+        }
+        catch (Exception ex)
+        {
+            // Log the exception for debugging
+            Debug.WriteLine($"Error loading products: {ex}");
+
+            // Show an alert to the user
+            await DisplayAlert("Error", "Could not load products. Please try again later.", "OK");
+        }
     }
 }
