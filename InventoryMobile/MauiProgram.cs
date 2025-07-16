@@ -1,11 +1,11 @@
-﻿using Inventory.Core.Application.Interfaces;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Inventory.Core.Application.Interfaces;
 using Inventory.Core.Application.Services;
 using Inventory.Core.Domain.Interfaces;
 using Inventory.Infrastructure.Data;
+using InventoryMobile.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using InventoryMobile.ViewModels;
-using CommunityToolkit.Mvvm.DependencyInjection; // Add this using statement
 
 namespace InventoryMobile
 {
@@ -39,10 +39,8 @@ namespace InventoryMobile
 
             var app = builder.Build();
 
-            // Configure the Ioc service provider
             Ioc.Default.ConfigureServices(app.Services);
 
-            // Run database migration
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();

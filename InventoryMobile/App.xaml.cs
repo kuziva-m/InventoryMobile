@@ -5,6 +5,8 @@
         public App()
         {
             InitializeComponent();
+
+            // Set the main page to be the AppShell
             MainPage = new AppShell();
         }
     }
