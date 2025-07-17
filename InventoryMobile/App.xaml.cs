@@ -2,11 +2,12 @@
 {
     public partial class App : Application
     {
-        public App(MainPage mainPage)
+        public App()
         {
-            InitializeComponent();
+            InitializeComponent(); // This loads the resources from App.xaml
 
-            MainPage = mainPage;
+            // Set the main page to a new AppShell
+            MainPage = new AppShell();
         }
     }
 }

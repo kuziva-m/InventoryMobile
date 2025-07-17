@@ -29,8 +29,10 @@ namespace InventoryMobile
 
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "inventory.db");
 
+            // CORRECT: Single DbContext registration with query splitting enabled
             builder.Services.AddDbContext<InventoryDbContext>(options =>
-                options.UseSqlite($"Data Source={dbPath}"));
+                options.UseSqlite($"Data Source={dbPath}",
+                    sqliteOptions => sqliteOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();

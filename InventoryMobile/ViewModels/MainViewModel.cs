@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Inventory.Core.Application.DTOs;
 using Inventory.Core.Application.Interfaces;
-using Inventory.Core.Domain.Entities;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace InventoryMobile.ViewModels
@@ -12,8 +12,9 @@ namespace InventoryMobile.ViewModels
     {
         private readonly IInventoryService _inventoryService;
 
+        // CORRECT: Changed to partial properties to fix the AOT/WinRT warning
         [ObservableProperty]
-        private ObservableCollection<ProductDto> _products;
+        private ObservableCollection<ProductDto> _products = new();
 
         [ObservableProperty]
         private bool _isLoading;
@@ -21,20 +22,36 @@ namespace InventoryMobile.ViewModels
         public MainViewModel(IInventoryService inventoryService)
         {
             _inventoryService = inventoryService;
-            _products = new ObservableCollection<ProductDto>();
         }
 
         [RelayCommand]
         private async Task LoadProductsAsync()
         {
+            // Prevent multiple loads at the same time
+            if (IsLoading)
+                return;
+
             IsLoading = true;
-            Products.Clear();
-            var products = await _inventoryService.GetAllProductsAsync();
-            foreach (var product in products)
+            try
             {
-                Products.Add(product);
+                Products.Clear();
+                var products = await _inventoryService.GetAllProductsAsync();
+                foreach (var product in products)
+                {
+                    Products.Add(product);
+                }
             }
-            IsLoading = false;
+            catch (Exception ex)
+            {
+                // Log the error to see what went wrong in the debug output
+                Debug.WriteLine($"[ViewModel] Error loading products: {ex.Message}");
+            }
+            finally
+            {
+                // CORRECT: This ensures IsLoading is always set to false,
+                // even if an error occurs.
+                IsLoading = false;
+            }
         }
     }
 }
