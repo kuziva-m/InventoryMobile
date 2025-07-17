@@ -3,6 +3,7 @@ using Inventory.Core.Application.Interfaces;
 using Inventory.Core.Application.Services;
 using Inventory.Core.Domain.Interfaces;
 using Inventory.Infrastructure.Data;
+using InventoryMobile.Converters;
 using InventoryMobile.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -36,6 +37,7 @@ namespace InventoryMobile
 
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddTransient<InverseBoolConverter>();
 
             var app = builder.Build();
 

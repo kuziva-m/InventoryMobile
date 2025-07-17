@@ -4,31 +4,35 @@
              xmlns:viewModels="clr-namespace:InventoryMobile.ViewModels"
              xmlns:dtos="clr-namespace:Inventory.Core.Application.DTOs;assembly=Inventory.Core.Application"
              x:Class="InventoryMobile.MainPage"
-             x:DataType="viewModels:MainViewModel">
+             x:DataType="viewModels:MainViewModel"
+             Title="Inventory">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+    <Grid>
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" HorizontalOptions="Center" VerticalOptions="Center" />
 
-            <CollectionView ItemsSource="{Binding Products}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="dtos:ProductDto">
-                        <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="5">
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Name}" FontSize="Large" FontAttributes="Bold" />
-                                <Label Text="{Binding CategoryName}" FontSize="Medium" />
-                                <Label Text="{Binding Description}" />
-                                <Label Text="{Binding VariantsDisplay}" />
-                                <Label Text="{Binding TotalQuantity, StringFormat='Total Quantity: {0}'}" />
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+        <CollectionView ItemsSource="{Binding Products}" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:ProductDto">
+                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-        </VerticalStackLayout>
-    </ScrollView>
-
+                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" />
+                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding CategoryName}" />
+                            <Label Grid.Row="2" Grid.Column="0" Text="{Binding VariantsDisplay}" />
+                            <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Text="{Binding TotalQuantity, StringFormat='Qty: {0}'}" VerticalOptions="Center" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
