@@ -1,13 +1,12 @@
-﻿namespace InventoryMobile
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent(); // This loads the resources from App.xaml
+﻿namespace InventoryMobile;
 
-            // Set the main page to a new AppShell
-            MainPage = new AppShell();
-        }
+public partial class App : Application
+{
+    public App()
+    {
+        InitializeComponent();
+
+        // Set the root navigation to Shell
+        MainPage = new AppShell();
     }
 }

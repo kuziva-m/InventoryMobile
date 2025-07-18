@@ -23,10 +23,7 @@ public partial class MainPage : ContentPage
         }
         catch (Exception ex)
         {
-            // Log the exception for debugging
             Debug.WriteLine($"Error loading products: {ex}");
-
-            // Show an alert to the user
             await DisplayAlert("Error", "Could not load products. Please try again later.", "OK");
         }
     }

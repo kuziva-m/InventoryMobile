@@ -8,50 +8,51 @@ using InventoryMobile.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace InventoryMobile
+namespace InventoryMobile;
+
+public static class MauiProgram
 {
-    public static class MauiProgram
+    public static MauiApp CreateMauiApp()
     {
-        public static MauiApp CreateMauiApp()
-        {
-            var builder = MauiApp.CreateBuilder();
-            builder
-                .UseMauiApp<App>()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+        var builder = MauiApp.CreateBuilder();
+
+        builder
+            .UseMauiApp<App>()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            });
 
 #if DEBUG
-            builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
 
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "inventory.db");
+        string dbPath = Path.Combine(FileSystem.AppDataDirectory, "inventory.db");
 
-            // CORRECT: Single DbContext registration with query splitting enabled
-            builder.Services.AddDbContext<InventoryDbContext>(options =>
-                options.UseSqlite($"Data Source={dbPath}",
-                    sqliteOptions => sqliteOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+        builder.Services.AddDbContext<InventoryDbContext>(options =>
+            options.UseSqlite($"Data Source={dbPath}",
+                sqliteOptions => sqliteOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IInventoryService, InventoryService>();
+        // Services
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<IInventoryService, InventoryService>();
 
-            builder.Services.AddSingleton<MainViewModel>();
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddTransient<InverseBoolConverter>();
+        // ViewModels & Pages
+        builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddTransient<MainPage>();
 
-            var app = builder.Build();
+        // Converters
+        builder.Services.AddTransient<InverseBoolConverter>();
 
-            Ioc.Default.ConfigureServices(app.Services);
+        var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
-                dbContext.Database.Migrate();
-            }
+        Ioc.Default.ConfigureServices(app.Services);
 
-            return app;
-        }
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+        dbContext.Database.Migrate();
+
+        return app;
     }
 }
