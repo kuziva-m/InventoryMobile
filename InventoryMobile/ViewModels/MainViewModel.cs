@@ -12,22 +12,32 @@ namespace InventoryMobile.ViewModels
     {
         private readonly IInventoryService _inventoryService;
 
-        // CORRECT: Changed to partial properties to fix the AOT/WinRT warning
+        // CORRECT: Using partial properties to fix the AOT/WinRT warning
         [ObservableProperty]
         private ObservableCollection<ProductDto> _products = new();
 
         [ObservableProperty]
         private bool _isLoading;
 
+        private bool _isInitialized;
+
         public MainViewModel(IInventoryService inventoryService)
         {
             _inventoryService = inventoryService;
         }
 
+        public async Task InitializeAsync()
+        {
+            if (_isInitialized)
+                return;
+
+            _isInitialized = true;
+            await LoadProductsAsync();
+        }
+
         [RelayCommand]
         private async Task LoadProductsAsync()
         {
-            // Prevent multiple loads at the same time
             if (IsLoading)
                 return;
 
@@ -43,13 +53,15 @@ namespace InventoryMobile.ViewModels
             }
             catch (Exception ex)
             {
-                // Log the error to see what went wrong in the debug output
                 Debug.WriteLine($"[ViewModel] Error loading products: {ex.Message}");
+                // CORRECT: Added a null check to fix the compiler warning.
+                if (Application.Current?.MainPage != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Could not load products. Please try again.", "OK");
+                }
             }
             finally
             {
-                // CORRECT: This ensures IsLoading is always set to false,
-                // even if an error occurs.
                 IsLoading = false;
             }
         }

@@ -6,14 +6,15 @@ namespace InventoryMobile.Converters
 {
     public class InverseBoolConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        // CORRECT: Updated signatures to allow for nullable parameters
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return !(bool)value;
+            return !(bool)value!;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return !(bool)value;
+            return !(bool)value!;
         }
     }
 }

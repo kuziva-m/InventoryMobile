@@ -1,38 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:InventoryMobile.ViewModels"
-             xmlns:dtos="clr-namespace:Inventory.Core.Application.DTOs;assembly=Inventory.Core.Application"
              x:Class="InventoryMobile.MainPage"
-             x:DataType="viewModels:MainViewModel"
+             xmlns:viewmodels="clr-namespace:InventoryMobile.ViewModels"
+             xmlns:dto="clr-namespace:Inventory.Core.Application.DTOs;assembly=Inventory.Core.Application"
+             xmlns:converters="clr-namespace:InventoryMobile.Converters"
+             x:DataType="viewmodels:MainViewModel"
              Title="Inventory">
 
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
+
     <Grid>
-        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" HorizontalOptions="Center" VerticalOptions="Center" />
-
-        <CollectionView ItemsSource="{Binding Products}" IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+        <CollectionView ItemsSource="{Binding Products}"
+                        IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dtos:ProductDto">
-                    <Frame Padding="10" Margin="5" BorderColor="LightGray" CornerRadius="5">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" />
-                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding CategoryName}" />
-                            <Label Grid.Row="2" Grid.Column="0" Text="{Binding VariantsDisplay}" />
-                            <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Text="{Binding TotalQuantity, StringFormat='Qty: {0}'}" VerticalOptions="Center" />
-                        </Grid>
-                    </Frame>
+                <DataTemplate x:DataType="dto:ProductDto">
+                    <VerticalStackLayout Padding="10">
+                        <Label Text="{Binding Name}" FontAttributes="Bold" />
+                        <Label Text="{Binding CategoryName}" />
+                        <Label Text="{Binding VariantsDisplay}" />
+                    </VerticalStackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
     </Grid>
 </ContentPage>

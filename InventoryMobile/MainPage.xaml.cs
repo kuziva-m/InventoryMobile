@@ -1,30 +1,22 @@
 ﻿using InventoryMobile.ViewModels;
-using System.Diagnostics;
 
 namespace InventoryMobile;
 
 public partial class MainPage : ContentPage
 {
-    private readonly MainViewModel _viewModel;
-
     public MainPage(MainViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
+        BindingContext = viewModel;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        try
+        // The ViewModel now handles its own initialization logic.
+        if (BindingContext is MainViewModel vm)
         {
-            await _viewModel.LoadProductsCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Error loading products: {ex}");
-            await DisplayAlert("Error", "Could not load products. Please try again later.", "OK");
+            await vm.InitializeAsync();
         }
     }
 }
