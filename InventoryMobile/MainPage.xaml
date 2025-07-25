@@ -4,17 +4,21 @@
              x:Class="InventoryMobile.MainPage"
              xmlns:viewmodels="clr-namespace:InventoryMobile.ViewModels"
              xmlns:dto="clr-namespace:Inventory.Core.Application.DTOs;assembly=Inventory.Core.Application"
-             xmlns:converters="clr-namespace:InventoryMobile.Converters"
              x:DataType="viewmodels:MainViewModel"
              Title="Inventory">
 
-    <ContentPage.Resources>
-        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
-    </ContentPage.Resources>
+    <VerticalStackLayout Padding="20">
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" 
+                           HorizontalOptions="Center" VerticalOptions="Center" />
 
-    <Grid>
-        <CollectionView ItemsSource="{Binding Products}"
-                        IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+        <Label Text="No products found."
+               IsVisible="{Binding Products.Count, Converter={StaticResource InverseBoolConverter}}"
+               HorizontalOptions="Center" VerticalOptions="Center" />
+
+        <CollectionView>
+            <CollectionView.ItemsSource>
+                <Binding Path="Products"/>
+            </CollectionView.ItemsSource>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="dto:ProductDto">
                     <VerticalStackLayout Padding="10">
@@ -25,8 +29,5 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
-                           HorizontalOptions="Center" VerticalOptions="Center" />
-    </Grid>
+    </VerticalStackLayout>
 </ContentPage>

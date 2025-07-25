@@ -49,9 +49,13 @@ public static class MauiProgram
 
         Ioc.Default.ConfigureServices(app.Services);
 
-        using var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
-        dbContext.Database.Migrate();
+        // Move database migration to a background task
+        Task.Run(async () =>
+        {
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+            await dbContext.Database.MigrateAsync();
+        });
 
         return app;
     }
